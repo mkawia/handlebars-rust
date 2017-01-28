@@ -248,13 +248,6 @@
 <span id="203">203</span>
 <span id="204">204</span>
 <span id="205">205</span>
-<span id="206">206</span>
-<span id="207">207</span>
-<span id="208">208</span>
-<span id="209">209</span>
-<span id="210">210</span>
-<span id="211">211</span>
-<span id="212">212</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>render</span>::{<span class='ident'>RenderContext</span>, <span class='ident'>RenderError</span>, <span class='ident'>Directive</span>};
 <span class='kw'>use</span> <span class='ident'>registry</span>::<span class='ident'>Registry</span>;
@@ -319,15 +312,8 @@
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
 <span class='kw'>mod</span> <span class='ident'>test</span> {
     <span class='kw'>use</span> <span class='ident'>registry</span>::<span class='ident'>Registry</span>;
-    <span class='kw'>use</span> <span class='ident'>context</span>::{<span class='ident'>as_string</span>, <span class='ident'>Context</span>};
+    <span class='kw'>use</span> <span class='ident'>context</span>::{<span class='self'>self</span>, <span class='ident'>as_string</span>, <span class='ident'>Context</span>};
     <span class='kw'>use</span> <span class='ident'>render</span>::{<span class='ident'>RenderContext</span>, <span class='ident'>RenderError</span>, <span class='ident'>Directive</span>, <span class='ident'>Helper</span>};
-
-    <span class='comment'>// default feature, using rustc_serialize `Json` as data type</span>
-    <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>all</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;rustc_ser_type&quot;</span>, <span class='ident'>not</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;serde_type&quot;</span>)))]</span>
-    <span class='kw'>use</span> <span class='ident'>serialize</span>::<span class='ident'>json</span>::<span class='ident'>ToJson</span>;
-    <span class='comment'>// serde_type feature, using serde_json as data type</span>
-    <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;serde_type&quot;</span>)]</span>
-    <span class='kw'>use</span> <span class='ident'>serde_json</span>::<span class='ident'>value</span>::<span class='ident'>ToJson</span>;
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>test_register_decorator</span>() {
@@ -371,7 +357,7 @@
                                                                           .<span class='ident'>as_object_mut</span>()
                                                                           .<span class='ident'>as_mut</span>() {
                                               <span class='ident'>m</span>.<span class='ident'>insert</span>(<span class='string'>&quot;hello&quot;</span>.<span class='ident'>to_string</span>(),
-                                                       <span class='string'>&quot;war&quot;</span>.<span class='ident'>to_owned</span>().<span class='ident'>to_json</span>());
+                                                       <span class='ident'>context</span>::<span class='ident'>to_json</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;war&quot;</span>.<span class='ident'>to_owned</span>()));
                                           }
                                           <span class='prelude-val'>Ok</span>(())
                                       }));
@@ -426,7 +412,7 @@
                                        <span class='kw'>let</span> <span class='ident'>s</span> <span class='op'>=</span> <span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}m&quot;</span>,
                                                        <span class='ident'>h</span>.<span class='ident'>param</span>(<span class='number'>0</span>)
                                                         .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>v</span><span class='op'>|</span> <span class='ident'>v</span>.<span class='ident'>value</span>())
-                                                        .<span class='ident'>unwrap_or</span>(<span class='kw-2'>&amp;</span><span class='number'>0</span>.<span class='ident'>to_json</span>()));
+                                                        .<span class='ident'>unwrap_or</span>(<span class='kw-2'>&amp;</span><span class='ident'>context</span>::<span class='ident'>to_json</span>(<span class='kw-2'>&amp;</span><span class='number'>0</span>)));
                                        <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>rc</span>.<span class='ident'>writer</span>().<span class='ident'>write</span>(<span class='ident'>s</span>.<span class='ident'>into_bytes</span>().<span class='ident'>as_ref</span>()));
                                        <span class='prelude-val'>Ok</span>(())
                                    }));
@@ -446,7 +432,7 @@
                                               <span class='kw'>let</span> <span class='ident'>s</span> <span class='op'>=</span> <span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}{}&quot;</span>,
                                                               <span class='ident'>h</span>.<span class='ident'>param</span>(<span class='number'>0</span>)
                                                                .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>v</span><span class='op'>|</span> <span class='ident'>v</span>.<span class='ident'>value</span>())
-                                                               .<span class='ident'>unwrap_or</span>(<span class='kw-2'>&amp;</span><span class='number'>0</span>.<span class='ident'>to_json</span>()),
+                                                               .<span class='ident'>unwrap_or</span>(<span class='kw-2'>&amp;</span><span class='ident'>context</span>::<span class='ident'>to_json</span>(<span class='kw-2'>&amp;</span><span class='number'>0</span>)),
                                                               <span class='ident'>new_unit</span>);
                                               <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>rc</span>.<span class='ident'>writer</span>().<span class='ident'>write</span>(<span class='ident'>s</span>.<span class='ident'>into_bytes</span>().<span class='ident'>as_ref</span>()));
                                               <span class='prelude-val'>Ok</span>(())
